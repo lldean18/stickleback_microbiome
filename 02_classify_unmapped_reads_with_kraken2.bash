@@ -35,7 +35,7 @@ conda activate kraken2
 cd /gpfs01/home/mbzlld/data/stickleback/unmapped_reads
 mkdir -p kraken2/classified
 mkdir -p kraken2/unclassified
-mkdir -p kraken2/braken
+mkdir -p kraken2/bracken
 
 # set variables
 #DBNAME=/gpfs01/home/mbzlld/data/databases/core_nt/k2_core_nt_20251015
@@ -43,20 +43,20 @@ DBNAME=/share/deepseq/matt/Ctenella/kraken_core
 R1=fastqs/${IND}_unmapped_R1.fastq.gz
 R2=fastqs/${IND}_unmapped_R2.fastq.gz
 
-echo "running k2 for ${IND}"
-
-# Classify the reads with the K2 wrapper
-k2 classify \
---db $DBNAME \
---threads 16 \
---classified-out kraken2/classified/${IND}_#.fasta \
---unclassified-out kraken2/unclassified/${IND}_#.fasta \
---use-names \
---report kraken2/${IND}_k2_report \
---output kraken2/${IND}_k2_output \
---log kraken2/${IND}_k2_log \
---paired \
-$R1 $R2
+##  echo "running k2 for ${IND}"
+##  
+##  # Classify the reads with the K2 wrapper
+##  k2 classify \
+##  --db $DBNAME \
+##  --threads 16 \
+##  --classified-out kraken2/classified/${IND}_#.fasta \
+##  --unclassified-out kraken2/unclassified/${IND}_#.fasta \
+##  --use-names \
+##  --report kraken2/${IND}_k2_report \
+##  --output kraken2/${IND}_k2_output \
+##  --log kraken2/${IND}_k2_log \
+##  --paired \
+##  $R1 $R2
 
 echo "running braken for ${IND}"
 
@@ -64,14 +64,13 @@ echo "running braken for ${IND}"
 # the last 3 lines which were information about how many reads were classified with the command
 # head -n -3 slurm-kraken2-6051446.out > /share/deepseq/laura/ctenella/kraken2/k2_log
 
-#gzip Ctenella_sup_k2_classified.fastq
 
 # calculate abundances for plotting with bracken
 bracken \
 -d $DBNAME \
 -i kraken2/${IND}_k2_report \
--o braken/${IND}.bracken.out \
--w braken/${IND}.breport
+-o kraken2/bracken/${IND}.bracken.out \
+-w kraken2/bracken/${IND}.breport
 
 # then use the .breport file in the shiny app here to make the plot: https://fbreitwieser.shinyapps.io/pavian/
 
